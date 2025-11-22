@@ -1,0 +1,18 @@
+#!/bin/sh
+# Shared functions for runit scripts
+
+msg() {
+    echo "runit: $@"
+}
+
+msg_ok() {
+    echo "runit: [OK] $@"
+}
+
+msg_warn() {
+    echo "runit: [WARN] $@" >&2
+}
+
+msg_error() {
+    echo "runit: [ERROR] $@" >&2
+}

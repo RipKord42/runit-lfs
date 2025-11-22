@@ -1,0 +1,3 @@
+#!/bin/sh
+tty=${PWD##*-}
+exec chpst -P /sbin/agetty 38400 "${tty}" linux

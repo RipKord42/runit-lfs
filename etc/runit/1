@@ -1,0 +1,19 @@
+#!/bin/sh
+# Stage 1: System initialization
+# This script runs once at boot before service supervision starts
+
+PATH=/usr/bin:/usr/sbin:/bin:/sbin
+
+. /etc/runit/functions
+
+msg "Stage 1: System initialization"
+
+# Source all core-services scripts in order
+for script in /etc/runit/core-services/*.sh; do
+    if [ -x "$script" ]; then
+        msg "Running $(basename $script)"
+        . "$script" || msg_warn "$(basename $script) returned non-zero"
+    fi
+done
+
+msg_ok "Stage 1 complete"

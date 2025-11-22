@@ -1,0 +1,6 @@
+#!/bin/sh
+exec 2>&1
+# Kill the daemon from stage 1, then run supervised
+udevadm control --exit 2>/dev/null || true
+sleep 1
+exec udevd

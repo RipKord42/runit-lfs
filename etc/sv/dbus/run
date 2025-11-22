@@ -1,0 +1,5 @@
+#!/bin/sh
+exec 2>&1
+# Create dbus runtime directory if needed
+[ ! -d /run/dbus ] && install -m755 -d /run/dbus
+exec dbus-daemon --system --nofork --nopidfile

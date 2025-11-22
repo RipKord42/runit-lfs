@@ -1,0 +1,47 @@
+#!/bin/sh
+# Stage 3: System shutdown
+# This script runs during shutdown/reboot
+
+PATH=/usr/bin:/usr/sbin:/bin:/sbin
+
+. /etc/runit/functions
+
+msg "Stage 3: System shutdown"
+
+# Check if we should skip shutdown (for emergency situations)
+# Only skip if stopit file exists AND is readable
+if [ -r /run/runit/stopit ]; then
+    msg_warn "Stopit file is set - aborting shutdown"
+    exit 0
+fi
+
+# Get reboot/halt status from control file
+LAST=0
+test -x /run/runit/reboot && LAST=6
+
+msg "Shutdown mode: $([ $LAST -eq 6 ] && echo 'REBOOT' || echo 'HALT')"
+
+# Source all shutdown scripts in order
+for script in /etc/runit/shutdown.d/*.sh; do
+    if [ -x "$script" ]; then
+        msg "Running $(basename $script)"
+        . "$script" || msg_warn "$(basename $script) returned non-zero"
+    fi
+done
+
+msg "Shutdown complete"
+
+# Perform final halt or reboot
+# NOTE: Use sysrq directly - don't call halt/poweroff/reboot as they might be
+# wrapper scripts that try to signal runit (which doesn't work from stage 3)
+sync
+sync
+sleep 1
+
+if [ ${LAST} -eq 0 ]; then
+    msg "Halting system (poweroff)"
+    echo o > /proc/sysrq-trigger
+else
+    msg "Rebooting system"
+    echo b > /proc/sysrq-trigger
+fi

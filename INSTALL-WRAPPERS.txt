@@ -1,0 +1,30 @@
+INSTALLING REBOOT/SHUTDOWN WRAPPERS
+====================================
+
+If your LFS system doesn't have reboot/shutdown/halt/poweroff commands
+(because sysvinit versions were removed), install these wrapper scripts:
+
+sudo install -m755 reboot-wrapper.sh /sbin/reboot
+sudo install -m755 halt-wrapper.sh /sbin/halt
+sudo install -m755 poweroff-wrapper.sh /sbin/poweroff
+sudo install -m755 shutdown-wrapper.sh /sbin/shutdown
+
+These scripts will:
+- Set the appropriate control file in /run/runit/
+- Signal runit (PID 1) to initiate shutdown
+
+USAGE:
+------
+reboot          - Reboot the system
+halt            - Halt the system
+poweroff        - Power off the system
+shutdown -r now - Reboot
+shutdown -h now - Halt
+
+NOTE: The shutdown wrapper is basic and doesn't support all sysvinit
+shutdown options (like delayed shutdown). For full functionality,
+consider installing sysvinit's shutdown tools or using the runit
+signal method directly:
+
+  kill -s INT 1    # reboot
+  kill -s TERM 1   # halt

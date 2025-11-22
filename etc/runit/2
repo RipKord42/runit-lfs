@@ -1,0 +1,12 @@
+#!/bin/sh
+# Stage 2: Service supervision
+# This script starts runsvdir which supervises all services in /var/service
+
+PATH=/usr/bin:/usr/sbin:/bin:/sbin
+
+. /etc/runit/functions
+
+msg "Stage 2: Starting service supervision"
+
+# Start runsvdir to supervise all services in /var/service
+exec runsvdir -P /var/service 'log: ...........................................................................................................................................................................................................................................................................................................................................................................................................'

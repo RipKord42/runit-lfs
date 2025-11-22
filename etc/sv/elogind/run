@@ -1,0 +1,5 @@
+#!/bin/sh
+exec 2>&1
+# Wait for dbus to be ready
+sv check dbus >/dev/null || exit 1
+exec /usr/libexec/elogind

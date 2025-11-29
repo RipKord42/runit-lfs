@@ -16,8 +16,9 @@ if [ -r /run/runit/stopit ]; then
 fi
 
 # Get reboot/halt status from control file
+# (Using file content instead of -x test because /run may be mounted noexec)
 LAST=0
-test -x /run/runit/reboot && LAST=6
+[ "$(cat /run/runit/reboot 2>/dev/null)" = "reboot" ] && LAST=6
 
 msg "Shutdown mode: $([ $LAST -eq 6 ] && echo 'REBOOT' || echo 'HALT')"
 

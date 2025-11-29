@@ -1,0 +1,15 @@
+#!/bin/sh
+# lm_sensors is a oneshot - load modules, run sensors -s, then exit
+# Use "down" file to prevent restart
+
+[ -r /etc/sysconfig/lm_sensors ] && . /etc/sysconfig/lm_sensors
+
+for module in $BUS_MODULES $HWMON_MODULES; do
+    /sbin/modprobe $module 2>/dev/null
+done
+
+/usr/bin/sensors -s 2>/dev/null
+
+# Create down file to prevent runit from restarting
+touch /etc/sv/lm_sensors/down
+exec sleep 1

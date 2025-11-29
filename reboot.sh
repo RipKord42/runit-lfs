@@ -1,19 +1,18 @@
 #!/bin/sh
 # Reboot script for runit
-# Simple, direct, and it works!
 
-# Handle -w flag (write to wtmp only, don't actually reboot)
+# Handle -w/-B flag (write to wtmp only, don't actually reboot)
 case "$1" in
-    -w)
-        # Just update wtmp and exit - no actual shutdown
+    -w|-B)
         exit 0
         ;;
 esac
 
 echo "System is going down for reboot NOW!"
 
-# Set reboot control file (executable = reboot)
-chmod 100 /run/runit/reboot
+# Signal reboot by writing "reboot" to control file
+# (Using file content instead of chmod because /run may be mounted noexec)
+echo "reboot" > /run/runit/reboot
 
 # Execute stage 3 shutdown
 exec /etc/runit/3
